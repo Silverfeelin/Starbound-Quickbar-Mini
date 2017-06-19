@@ -1,0 +1,9 @@
+{
+  "version" : "Alpha v0.04p1",
+  "friendlyName" : "Quickbar Mini",
+  "name" : "QuickbarMini",
+  "author" : "zetaPRIME (patch: Silverfeelin)",
+  "description" : "Standalone (vanilla) multiplayer friendly version of the Quickbar from zetaPRIME's StardustLib.\nSource: ^cyan;https://github.com/zetaPRIME/sb.StardustSuite^reset;\nRequires ItemScripts: ^cyan;https://github.com/Silverfeelin/Starbound-ItemScripts^reset;",
+  "includes":["StardustLib"],
+  "requires":["ItemScripts"]
+}
