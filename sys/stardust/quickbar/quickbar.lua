@@ -1,6 +1,11 @@
 --
 
 function openInterface(info)
+  if player.isLounging() then
+    pane.playSound("/sfx/interface/clickon_error.ogg")
+    return
+  end
+
   -- Silverfeelin: This is the bit that differs from StardustLib.
   local item = root.assetJson("/sys/stardust/quickbar/quickbarItem.config")
   item.parameters.info = info
