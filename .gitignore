@@ -1,4 +1,4 @@
-# ignore bundled ItemInterfaces version (https://github.com/Silverfeelin/Starbound-ItemInterfaces/wiki/Redistribution)
+# ignore bundled ItemScripts version (https://github.com/Silverfeelin/Starbound-ItemScripts)
 /items/active/fossil/fossilbrush.lua
-/items/active/fossil/activeItemInterface.lua
-/ItemInterfaces-LICENSE
+/scripts/itemScriptLoader.lua
+/ItemScripts-LICENSE
