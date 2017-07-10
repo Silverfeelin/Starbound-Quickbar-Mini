@@ -13,33 +13,46 @@ function openInterface(info)
   player.setSwapSlotItem(item)
 end
 
-local lst = "scroll.list"
+local wList = "scroll.list"
 
 local prefix = ""
 
-function addItem(itm)
-  local li = lst .. "." .. widget.addListItem(lst)
-  widget.setText(li .. ".label", prefix .. itm.label)
-  widget.registerMemberCallback(li .. ".buttonContainer", "click", function()
-    openInterface(itm.pane)
+function addItem(item, prefix)
+  prefix = type(prefix) == "string" and prefix or ""
+  local label = string.format("%s%s", prefix, item.label)
+
+  local wLi = string.format("%s.%s", wList, widget.addListItem(wList))
+  local wLabel = string.format("%s.%s", wLi, "label")
+  local wBtnContainer = string.format("%s.%s", wLi, "buttonContainer")
+
+  widget.setText(wLabel, label)
+  widget.registerMemberCallback(wBtnContainer, "click", function()
+    openInterface({ config = item.pane, loadScript = item.loadScript })
   end)
-  local btn = li .. ".buttonContainer." .. widget.addListItem(li .. ".buttonContainer") .. ".button"
-  if itm.icon then
-    local icn = itm.icon
-    if icn:sub(1,1) ~= "/" then icn = "/quickbar/" .. icn end
-    widget.setButtonOverlayImage(btn, itm.icon)
+
+  local wBtn = string.format("%s.%s.%s", wBtnContainer, widget.addListItem(wBtnContainer), "button")
+  if item.icon then
+    local icon = item.icon
+    if icon:sub(1,1) ~= "/" then icon = "/quickbar/" .. icon end
+    widget.setButtonOverlayImage(wBtn, icon)
+  end
+end
+
+function addItems(items, prefix)
+  if type(items) ~= "table" or #items == 0 then return end
+
+  for _,v in ipairs(items) do
+    addItem(v, prefix)
   end
 end
 
 function init()
-  widget.clearListItems(lst)
+  widget.clearListItems(wList)
+
   local items = root.assetJson("/quickbar/icons.json") or {}
-  prefix = "^#7fff7f;"
-  for k,v in pairs(items.priority or {}) do addItem(v) end
+  addItems(items.priority, "^#7fff7f;")
   if player.isAdmin() then
-    prefix = "^#bf7fff;"
-    for k,v in pairs(items.admin or {}) do addItem(v) end
+    addItems(items.admin, "^#bf7fff;")
   end
-  prefix = ""
-  for k,v in pairs(items.normal or {}) do addItem(v) end
+  addItems(items.normal)
 end
