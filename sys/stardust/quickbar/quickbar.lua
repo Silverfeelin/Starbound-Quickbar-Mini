@@ -1,21 +1,36 @@
 --
 
 function openInterface(info)
-  if player.isLounging() then
-    pane.playSound("/sfx/interface/clickon_error.ogg")
+  -- Type checking
+  if type(info) == "string" then
+    info = { config = root.assetJson(info) }
+  elseif type(info) ~= "table" then
+    sb.logError("Quickbar: Interface '%s' could not be opened. Expected a string or table.", info)
+    restoreItem()
     return
   end
 
-  -- Silverfeelin: This is the bit that differs from StardustLib.
-  local item = root.assetJson("/sys/stardust/quickbar/quickbarItem.config")
-  item.parameters.info = info
-  item.parameters.restore = player.swapSlotItem()
-  player.setSwapSlotItem(item)
+  -- Globally store configuration.
+  if type(info.config) == "string" then
+    quickbarConfig = root.assetJson(info.config)
+  elseif type(info.config) == "table" then
+    quickbarConfig = info.config
+  end
+
+  -- Allow dynamic modification of the loaded configuration through global 'quickbarConfig'.
+  if quickbarConfig and info.loadScript then
+    loadScript(info.loadScript)
+  end
+
+  -- Open interface.
+  if quickbarConfig then
+    player.interact(info.interactionType or "ScriptPane", quickbarConfig)
+  else
+    sb.logError("Quickbar: Couldn't open an interface, as no valid config was defined.\nInfo: %s", sb.printJson(info))
+  end
 end
 
 local wList = "scroll.list"
-
-local prefix = ""
 
 function addItem(item, prefix)
   prefix = type(prefix) == "string" and prefix or ""
@@ -55,4 +70,11 @@ function init()
     addItems(items.admin, "^#bf7fff;")
   end
   addItems(items.normal)
+end
+
+function loadScript(script)
+  local status, err = pcall(function() require(info.loadScript) end)
+  if not status then
+    sb.logError("Quickbar: Failed loading '%s':\n%s", info.loadScript, err)
+  end
 end
