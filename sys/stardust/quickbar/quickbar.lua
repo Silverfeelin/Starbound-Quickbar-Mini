@@ -73,8 +73,8 @@ function init()
 end
 
 function loadScript(script)
-  local status, err = pcall(function() require(info.loadScript) end)
+  local status, err = pcall(function() require(script) end)
   if not status then
-    sb.logError("Quickbar: Failed loading '%s':\n%s", info.loadScript, err)
+    sb.logError("Quickbar: Failed loading '%s':\n%s", script, err)
   end
 end
