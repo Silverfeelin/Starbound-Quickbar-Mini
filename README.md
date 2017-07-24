@@ -1,4 +1,4 @@
-# Starbound-Quickbar-Mini
+# Quickbar Mini
 A standalone version of the Quickbar from zetaPRIME's StardustLib mod.
 
 The mod replaces the matter manipulator option for quick access to multiple different interfaces.  
