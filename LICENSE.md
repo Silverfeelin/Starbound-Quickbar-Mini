@@ -1,29 +1,12 @@
 ## Disclaimer
-This repository consists mostly of source files from [zetaPRIME](https://github.com/zetaPRIME)'s [sb.StardustSuite](https://github.com/zetaPRIME/sb.StardustSuite) mod.  
-Some small additions and modifications allow use of the Quickbar on servers that don't have the mod or [StardustLib](https://github.com/zetaPRIME/sb.StardustSuite#stardustlib), without any issues.
+This repository consists mostly of source files from [zetaPRIME](https://github.com/zetaPRIME)'s [sb.StardustSuite](https://github.com/zetaPRIME/sb.StardustSuite) mod.
+
+The mod takes just the Quickbar from StardustLib, so users can install it without any other tools and features.  
+This also makes the Quickbar fully multiplayer compatible, as long as servers allow asset mismatching.
 
 Permission for the creation and distribution of this standalone version was given by zetaPRIME directly.
 For licensing information, please refer to the [sb.StardustSuite](https://github.com/zetaPRIME/sb.StardustSuite) repository.
 
-## Modified sources
-
-~ `/sys/stardust/openinterface.lua`
-
-* Changed `openInterface` to make use of [ItemScripts][ItemScripts], for server compatibility.
-
-\+ `/sys/stardust/quickbar/quickbarItem.config`
-
-* Defines the item for the [ItemScripts][ItemScripts] implementation.
-
-[ItemScripts]:https://github.com/Silverfeelin/Starbound-ItemScripts
-
 ## License
-[MIT License](https://opensource.org/licenses/MIT)
 
-Copyright 2017 Silverfeelin
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Please refer to the [sb.StardustSuite](https://github.com/zetaPRIME/sb.StardustSuite) repository or contact zetaPRIME for licensing information.
