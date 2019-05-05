@@ -1,7 +1,7 @@
 {
-  "version": "Alpha v0.20",
+  "version": "Alpha v0.36",
   "friendlyName": "Quickbar Mini",
   "name": "QuickbarMini",
   "author": "zetaPRIME",
-  "description": "Standalone (vanilla) multiplayer friendly version of the Quickbar from zetaPRIME's StardustLib.\nSource: ^cyan;https://github.com/zetaPRIME/sb.StardustSuite^reset;"
+  "description": "Standalone multiplayer friendly version of the Quickbar from zetaPRIME's StardustLib.\nSource: ^cyan;https://github.com/zetaPRIME/sb.StardustSuite^reset;"
 }

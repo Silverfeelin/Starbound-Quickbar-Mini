@@ -1,13 +1,37 @@
 {
-  "priority" : [
-    { "label" : "Matter Manipulator", "pane" : "/interface/scripted/mmupgrade/mmupgradegui.original.config", "icon" : "/items/tools/miningtools/beamaxe.png" }
-  ],
-  "admin" : [
-    { "label" : "Ship Remote Control", "pane" : "/interface/cockpit/cockpit.config", "icon" : "/items/active/stationtransponder/stationtransponder.png" },
-    { "label" : "Tech Panel", "pane" : "/interface/scripted/techupgrade/techupgradegui.config", "icon" : "/items/generic/other/techcard.png" },
-    { "label" : "Mech Assembly", "pane" : "/interface/scripted/mechassembly/mechassemblygui.config", "icon" : "/items/generic/salvage/salvagetier5.png" }
-  ],
-  "normal" : [
-
-  ]
+  // legacy sections (deprecated)
+  "priority" : [ ], "admin" : [ ], "normal" : [ ],
+  
+  // new format
+  "items" : {
+    "starbound:mattermanipulator" : { 
+      "label" : "^essential;Matter Manipulator",
+      "icon" : "/items/tools/miningtools/beamaxe.png?border=1;000000;00000000",
+      "weight" : -1150,
+      "action" : [ "pane", "/interface/scripted/mmupgrade/mmupgradegui.original.config" ],
+      "condition" : [ "statNegative", "noMatterManipulator" ]
+    },
+    "starbound:navigation" : {
+      "label" : "^essential;Navigation",
+      "icon" : "/interface/statuses/lowgrav.png",
+      "weight" : -1145,
+      "action" : [ "pane", "/interface/cockpit/cockpit.config" ],
+      "condition" : [ "any", [ "admin" ], [ "ownShip" ] ]
+    },
+    
+    "starbound:techpanel" : {
+      "label" : "^admin;Tech Panel",
+      "icon" : "/items/generic/other/techcard.png",
+      "weight" : -1000,
+      "action" : ["pane", "/interface/scripted/techupgrade/techupgradegui.config"],
+      "condition" : [ "admin" ]
+    },
+    "starbound:mechassembly" : {
+      "label" : "^admin;Mech Assembly",
+      "icon" : "/items/generic/salvage/salvagetier5.png",
+      "weight" : -1000,
+      "action" : [ "pane", "/interface/scripted/mechassembly/mechassemblygui.config" ],
+      "condition" : [ "admin" ]
+    }
+  }
 }

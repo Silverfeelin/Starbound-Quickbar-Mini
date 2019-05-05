@@ -1,82 +1,136 @@
 --
 
+require("/scripts/util.lua")
 
+local actions, conditions = { }, { }
+local function nullfunc() end
+local function action(id, ...) return (actions[id] or nullfunc)(...) end
+local function condition(id, ...) return (conditions[id] or nullfunc)(...) end
 
+-------------
+-- actions --
+-------------
 
-function openInterface(info)
-  if type(info) ~= "table" then info = {config = info} end
-  player.interact(info.interactionType or "ScriptPane", info.config)
+function actions.pane(cfg)
+  if type(cfg) ~= "table" then cfg = { config = cfg } end
+  player.interact(cfg.type or "ScriptPane", cfg.config)
 end
 
-
-
-
-modules = {}
-
-local function handleClick(itm)
-  if itm.scriptAction then -- scripted action specified
-    local ci = string.find(itm.scriptAction, ":")
-    local module = string.sub(itm.scriptAction, 1, ci-1)
-    local action = string.sub(itm.scriptAction, ci+1)
-
-    if not modules[module] then
-      modules[module] = {} -- initialize module table and load in the appropriate script
-      _ENV.module = modules[module] -- allow code to be less dependent on filename
-      require(string.format("/quickbar/%s.lua", module))
-      _ENV.module = nil
-    end
-
-    if modules[module][action] then
-      modules[module][action](itm) -- trigger script action, passing in the item table
-    end
-  elseif itm.pane then openInterface(itm.pane) end
+function actions.exec(script, ...)
+  if type(script) ~= "string" then return nil end
+  params = {...} -- pass any given parameters to the script
+  _SBLOADED[script] = nil require(script) -- force execute every time
+  params = nil -- clear afterwards for cleanliness
 end
 
-local lst = "scroll.list"
+function actions._legacy_module(s)
+  local m, e = (function() local it = string.gmatch(s, "[^:]+") return it(), it() end)()
+  local mf = string.format("/quickbar/%s.lua", m)
+  module = { }
+  _SBLOADED[mf] = nil require(mf) -- force execute
+  module[e]() module = nil -- run function and clean up
+end
 
-local prefix = ""
+----------------
+-- conditions --
+----------------
 
-local function addItem(itm)
-  local li = lst .. "." .. widget.addListItem(lst)
-  widget.setText(li .. ".label", prefix .. itm.label)
-  widget.registerMemberCallback(li .. ".buttonContainer", "click", function()
-    handleClick(itm)
-  end)
-  local btn = li .. ".buttonContainer." .. widget.addListItem(li .. ".buttonContainer") .. ".button"
-  if itm.icon then
-    local icn = itm.icon
-    if icn:sub(1,1) ~= "/" then icn = "/quickbar/" .. icn end
-    widget.setButtonOverlayImage(btn, itm.icon)
+function conditions.any(...)
+  for _, c in pairs{...} do if condition(table.unpack(c)) then return true end end
+  return false
+end
+function conditions.all(...)
+  for _, c in pairs{...} do if not condition(table.unpack(c)) then return false end end
+  return true
+end
+
+function conditions.admin() return player.isAdmin() end
+function conditions.statPositive(stat) return status.statPositive(stat) end
+function conditions.statNegative(stat) return not status.statPositive(stat) end
+function conditions.species(species) return player.species() == species end
+function conditions.ownShip() return player.worldId() == player.ownShipWorldId() end
+
+---------------
+-- internals --
+---------------
+
+local colorSub = { -- color tag substitutions
+  ["^essential;"] = "^#ffb133;",
+  ["^admin;"] = "^#bf7fff;",
+}
+
+local function legacyAction(i)
+  if i.pane then return { "pane", i.pane } end
+  if i.scriptAction then
+    sb.logInfo(string.format("Quickbar item \"%s\": scriptAction is deprecated, please use new entry format", i.label))
+    return { "_legacy_module", i.scriptAction }
   end
+  return { "null" }
 end
 
-local items = {}
-local autoRefreshRate = 0
-local autoRefreshTimer = 0
-function init()
-  items = root.assetJson("/quickbar/icons.json") or {}
-  refresh()
-
-  autoRefreshRate = config.getParameter("autoRefreshRate")
-  autoRefreshTimer = autoRefreshRate
-end
-
-function refresh()
-  widget.clearListItems(lst)
-  prefix = "^#7fff7f;"
-  for k,v in pairs(items.priority or {}) do addItem(v) end
+local function buildList()
+  widget.clearListItems("scroll.list") -- clear out first
+  local c = root.assetJson("/quickbar/icons.json")
+  local items = { }
+  
+  for _, i in pairs(c.items) do -- dump in normal items
+    if not i.condition or condition(table.unpack(i.condition)) then
+      table.insert(items, i)
+    end
+  end
+    
+  -- and then translate legacy entries
+  for _, i in pairs(c.priority) do
+    table.insert(items, {
+      label = "^essential;" .. i.label,
+      icon = i.icon,
+      weight = -1100,
+      action = legacyAction(i)
+    })
+  end
   if player.isAdmin() then
-    prefix = "^#bf7fff;"
-    for k,v in pairs(items.admin or {}) do addItem(v) end
+    for _, i in pairs(c.admin) do
+      table.insert(items, {
+        label = "^admin;" .. i.label,
+        icon = i.icon,
+        weight = -1000,
+        action = legacyAction(i)
+      })
+    end
   end
-  prefix = ""
-  for k,v in pairs(items.normal or {}) do addItem(v) end
+  for _, i in pairs(c.normal) do
+    table.insert(items, {
+      label = i.label,
+      icon = i.icon,
+      action = legacyAction(i)
+    })
+  end
+  
+  -- sort by weight then alphabetically, ignoring caps and tags (and doing tag substitutions while we're here)
+  for _, i in pairs(items) do
+    i._sort = string.lower(string.gsub(i.label, "(%b^;)", ""))
+    i.label = string.gsub(i.label, "(%b^;)", colorSub)
+    i.weight = i.weight or 0
+    --sb.logInfo("label: "..i.label.."\nsort: "..i._sort)
+  end
+  table.sort(items, function(a, b) return a.weight < b.weight or (a.weight == b.weight and a._sort < b._sort) end)
+  
+  -- and add items to pane list
+  for idx = 1, #items do
+    local i = items[idx]
+    local l = "scroll.list." .. widget.addListItem("scroll.list")
+    widget.setText(l .. ".label", i.label)
+    local bc = l .. ".buttonContainer"
+    widget.registerMemberCallback(bc, "click", function() action(table.unpack(i.action)) end)
+    local btn = bc .. "." .. widget.addListItem(bc) .. ".button"
+    widget.setButtonOverlayImage(btn, i.icon or "/items/currency/essence.png")
+  end
 end
 
-function update(dt)
-  autoRefreshTimer = math.max(0, autoRefreshTimer - dt)
-  if autoRefreshTimer == 0 then
-    autoRefreshTimer = autoRefreshRate
-    --refresh() -- whoops, that just kind of derps things up :(
-  end
+function init()
+  buildList()
+end
+
+function uninit()
+  widget.clearListItems("scroll.list")
 end
