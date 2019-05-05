@@ -3,5 +3,7 @@
   "friendlyName": "Quickbar Mini",
   "name": "QuickbarMini",
   "author": "zetaPRIME",
-  "description": "Standalone multiplayer friendly version of the Quickbar from zetaPRIME's StardustLib.\nSource: ^cyan;https://github.com/zetaPRIME/sb.StardustSuite^reset;"
+  "description": "Standalone multiplayer friendly version of the Quickbar from zetaPRIME's StardustLib.\nSource: ^cyan;https://github.com/zetaPRIME/sb.StardustSuite^reset;",
+  "link" : "steam://url/CommunityFilePage/1088459034",
+  "steamContentId" : "1088459034"
 }
