@@ -1,9 +1,13 @@
 {
-  "version": "Alpha v0.36",
-  "friendlyName": "Quickbar Mini",
-  "name": "QuickbarMini",
-  "author": "zetaPRIME",
-  "description": "Standalone multiplayer friendly version of the Quickbar from zetaPRIME's StardustLib.\nSource: ^cyan;https://github.com/zetaPRIME/sb.StardustSuite^reset;",
-  "link" : "steam://url/CommunityFilePage/1088459034",
-  "steamContentId" : "1088459034"
+  "author" : "Silverfeelin",
+  "description" : "Unlocks the Tech Panel and Mech Assembly interface, without having to be in admin mode.",
+  "friendlyName" : "Quickbar Unlocker",
+  "name" : "QuickbarUnlocker",
+  "includes" : [
+    "QuickbarMini",
+    "StardustLib"
+  ],
+  "version" : "Alpha v0.36",
+  "steamContentId" : "1089421344",
+  "link" : "steam://url/CommunityFilePage/1089421344"
 }
