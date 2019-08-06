@@ -43,9 +43,7 @@ function conditions.all(...)
   for _, c in pairs{...} do if not condition(table.unpack(c)) then return false end end
   return true
 end
-function conditions.not(conditionToNegate)
-  return not condition(conditionToNegate)
-end
+conditions["not"] = function(...) return not condition(...) end
 
 function conditions.admin() return player.isAdmin() end
 function conditions.statPositive(stat) return status.statPositive(stat) end
